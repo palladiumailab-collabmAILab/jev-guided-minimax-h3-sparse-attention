@@ -1,5 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/server";
-import { createMcpHandler } from "agents/mcp/server";
+import { McpServer, createMcpHandler } from "@modelcontextprotocol/server";
 import { ZodError } from "zod";
 
 import { PlanInputSchema, createSparsePlan, type AiRunner } from "./planner";
@@ -72,7 +71,7 @@ async function handlePlan(request: Request, env: Env): Promise<Response> {
 }
 
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
     if (url.pathname === "/health") {
@@ -90,7 +89,8 @@ export default {
     }
 
     if (url.pathname === "/mcp") {
-      return createMcpHandler(() => createServer(env), { route: "/mcp" })(request, env, ctx);
+      const handler = createMcpHandler(() => createServer(env));
+      return handler.fetch(request);
     }
 
     return json(
