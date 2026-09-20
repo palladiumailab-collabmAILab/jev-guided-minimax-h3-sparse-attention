@@ -31,7 +31,7 @@ No Q/K/V tensors are sent to Cloudflare. The request contains denoising-step con
 
 ## What is implemented
 
-- Stateless Cloudflare MCP server at `/mcp` using `createMcpHandler`.
+- Stateless Cloudflare MCP server at `/mcp` using MCP SDK v2 `createMcpHandler`.
 - Low-overhead planner endpoint at `/plan`.
 - Cloudflare Workers AI model `typesafe/jev`.
 - One Jev inference per denoising step.
@@ -53,18 +53,20 @@ The custom node currently depends on ComfyUI's experimental MiniMax H3 sparse-at
 
 ## Deploy the Worker
 
-Requirements: Node.js, npm, a Cloudflare account with Workers AI enabled.
+Requirements: Node.js, pnpm, a Cloudflare account with Workers AI enabled.
 
 ```bash
-npm install
-npx wrangler login
-npm run deploy
+corepack enable
+corepack prepare pnpm@10.15.1 --activate
+pnpm install
+pnpm exec wrangler login
+pnpm run deploy
 ```
 
 Optional but recommended for a public deployment:
 
 ```bash
-npx wrangler secret put SHARED_TOKEN
+pnpm exec wrangler secret put SHARED_TOKEN
 ```
 
 The Worker exposes:
@@ -76,7 +78,7 @@ The Worker exposes:
 Local development:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 ## Install the ComfyUI node
@@ -133,7 +135,7 @@ The real array length equals the H3 block count.
 ## Verification
 
 ```bash
-npm run check
+pnpm run check
 python -m compileall -q comfyui_jev_sparse
 ```
 
