@@ -1,13 +1,21 @@
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
+from pathlib import Path
 import unittest
 import urllib.error
 import urllib.request
 from unittest.mock import patch
 
-from comfyui_jev_sparse.client import PlannerClient, PlannerError
+_CLIENT_PATH = Path(__file__).resolve().parents[1] / "comfyui_jev_sparse" / "client.py"
+_SPEC = importlib.util.spec_from_file_location("jev_sparse_client", _CLIENT_PATH)
+assert _SPEC is not None and _SPEC.loader is not None
+_CLIENT_MODULE = importlib.util.module_from_spec(_SPEC)
+_SPEC.loader.exec_module(_CLIENT_MODULE)
+PlannerClient = _CLIENT_MODULE.PlannerClient
+PlannerError = _CLIENT_MODULE.PlannerError
 
 
 class FakeResponse:
