@@ -52,6 +52,10 @@ ComfyUI currently documents fixed-ratio SLA-style sparsity as an experimental pa
 
 The custom node currently depends on ComfyUI's experimental MiniMax H3 sparse-attention internals, including `comfy_extras.nodes_sparse_attention` and `comfy_kitchen.sol_attn_chunked`. Upstream API changes may require adaptation.
 
+The exact compatibility target and import check are recorded in
+[`docs/comfyui-compatibility.md`](docs/comfyui-compatibility.md). CI validates the pinned manifest; a clean
+ComfyUI checkout is required for the real import check, and a CUDA machine is required for workflow evidence.
+
 ## Deploy the Worker
 
 Requirements: Node.js, pnpm, a Cloudflare account with Workers AI enabled.
