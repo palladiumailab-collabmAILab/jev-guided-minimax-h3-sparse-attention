@@ -1,49 +1,49 @@
 # Codex Software Development Harness
 
-This shared file is managed from `palladiumailab-collabmAILab/codex-dev-harness`. Do not edit its common rules in this downstream repository. Update the canonical harness first, then synchronize from a pinned upstream revision recorded in `docs/harness-upstream.md`.
+システム・開発者指示、ユーザーの明示依頼、現在地に近い `AGENTS.override.md` / `AGENTS.md` を優先します。このファイルは常時読む最小ルータです。
 
-Project-specific instructions belong in `AGENTS.project.md` or explicitly project-specific skills/docs. Read `AGENTS.project.md` when it exists.
+## 正本
 
-## Common invariants
+- 共通ハーネスの正本は `palladiumailab-collabmAILab/codex-dev-harness`。
+- 下流へコピーした共通ファイルは upstream-managed とし、プロジェクト固有規則は `AGENTS.project.md` 等へ分離する。
+- 共通規則の変更は正本で検証してから pinned revision で下流へ同期する。
 
-- Preserve the requested outcome, explicit constraints, and acceptance criteria.
-- Read the relevant `docs/specs/` or existing canonical requirement source before changing durable product/system behavior.
-- Treat tests, lint, builds, CI, evaluations, and inspections as evidence, not as substitutes for the requested outcome. Do not weaken them merely to obtain a pass.
-- Keep changes small and scoped. Do not add unrequested features, dependencies, external integrations, or broad refactors.
-- Preserve unrelated work. Do not use destructive reset/clean/checkout or force push as a default recovery action.
-- Never commit or expose secrets, private keys, tokens, or unnecessary personal data.
-- Do not deploy, incur charges, delete data, change permissions, or write to external services unless the task explicitly authorizes it.
+## モデルプロファイル
 
-## Conditional guidance
+実行中のモデルに対応するものを **1つだけ** 読みます。
 
-Read only when relevant:
+- GPT-6 Astra: `profiles/astra/AGENTS.md`
+- GPT-5.6 Sol / Luna: `profiles/sol-luna/AGENTS.md`
+- その他: モデル固有プロファイルを推測で流用しない。
 
-- executable software, Docker reproducibility, GitHub Actions, Python/Ruff, or canonical specifications: `docs/project-baseline.md`
-- task contracts, evaluation decisions, long-running execution semantics, or optimization records: `docs/harness-architecture.md`
-- explicit GitHub operations: `skills/github-operations/SKILL.md`
-- unfamiliar cross-module repository investigation: `skills/repo-research/SKILL.md`
-- iterative agent/workflow optimization: `skills/self-improvement/SKILL.md`
-- work spanning multiple substantial stages/sessions: `skills/long-running-work/SKILL.md`
+## 共通不変条件
 
-## Model routing
+- 依頼された成果、明示制約、受け入れ条件を変更しない。
+- durable な仕様変更では、関連する正本仕様だけを先に確認する。
+- test / lint / build / 評価は証拠であり成果そのものではない。合格のためだけに条件や評価器を弱めない。
+- 最小の変更面に限定し、依頼外の機能・依存・大規模リファクタを追加しない。
+- 既存の未コミット変更を保持し、破壊的 reset / clean / force push を既定にしない。
+- 秘密情報を出力・コミット・外部送信しない。依頼のないデプロイ、課金、削除、権限変更、外部書込みを行わない。
+- 同じ情報を目的なく再読込せず、状態変化のない同一検証を反復しない。
 
-- Default: `gpt-5.6-sol / medium` for implementation, architecture, debugging, review, and final integration.
-- Bounded worker: `gpt-5.6-luna / max` for candidate extraction, mechanical transformation, bounded exploration, and independent read-only checks.
-- Escalate from Luna to Sol when the task requires cross-cutting judgment, architectural choice, unresolved debugging, or synthesis across uncertain evidence. Do not repeat the same failed cheap path.
-- Add other routing branches only when explicitly requested or supported by repo-local evaluation.
+## 条件付き参照
 
-## Workflow
+必要な項目だけ読みます。通常実装で `docs/project-baseline.md` 全体を先読みしません。
 
-1. Identify the requested outcome, constraints, acceptance criteria, and smallest relevant change surface.
-2. Read only the relevant project-specific instructions, specifications, code, tests, and configuration.
-3. Implement the smallest sufficient change.
-4. Run proportionate verification.
-5. When GitHub changes are requested, verify the remote artifact and expected GitHub Actions result.
-6. Report the material change, evidence, and unresolved blockers.
+- 仕様の正本・仕様変更: `docs/baselines/specifications.md`
+- Docker / 再現環境を変更・追加: `docs/baselines/docker.md`
+- GitHub Actions / remote quality gate を変更・確認: `docs/baselines/github-ci.md`
+- Python lint / format / Ruff を変更・追加: `docs/baselines/python-ruff.md`
+- task contract / evaluation / optimization semantics を変更: `docs/harness-architecture.md`
+- セッション間 handoff が必要: `templates/codex-progress.md`
+- モデル別タスク依頼を組み立てる: `templates/task-prompts/`
 
-## Downstream ownership
+## Skill 発火条件
 
-- This file and the shared files listed in `docs/harness-upstream.md` are upstream-managed.
-- Do not modify shared rules directly in the downstream repository.
-- Put project-specific requirements, architecture constraints, commands, and exceptions in `AGENTS.project.md` or another clearly project-specific file.
-- If a shared rule must change, update `codex-dev-harness` first and synchronize the resulting revision.
+- `repo-research`: 未知のrepoで複数モジュールを横断して入口・依存・実行経路を特定するとき。
+- `github-operations`: branch / commit / push / Issue / PR / CI / remote mutation を明示依頼されたとき。
+- `self-improvement`: baseline と評価基準を固定して agent / prompt / tool / workflow を反復比較するとき。
+- `long-running-work`: 通常の1実装パスで完了せず、複数の大きな段階またはセッション間handoffが必要なとき。
+- `reverse-engineering`: 許可された opaque / legacy / binary / protocol を互換性・移行・診断・防御目的で解析するとき。
+
+該当する `SKILL.md` だけ読み、全skillを事前読込しません。
