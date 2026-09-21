@@ -4,15 +4,38 @@ import json
 import os
 import urllib.error
 import urllib.request
-from typing import Any
+from typing import Any, Protocol
 
 
 class PlannerError(RuntimeError):
     pass
 
 
+class ResponseLike(Protocol):
+    def __enter__(self) -> "ResponseLike": ...
+
+    def __exit__(self, exc_type: object, exc: object, tb: object) -> object: ...
+
+    def read(self) -> bytes: ...
+
+
+class UrlOpener(Protocol):
+    def __call__(
+        self,
+        request: urllib.request.Request,
+        *,
+        timeout: float,
+    ) -> ResponseLike: ...
+
+
 class PlannerClient:
-    def __init__(self, endpoint: str, timeout_s: float = 0.8) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        timeout_s: float = 0.8,
+        *,
+        opener: UrlOpener | None = None,
+    ) -> None:
         endpoint = endpoint.strip().rstrip("/")
         if endpoint.endswith("/mcp"):
             endpoint = endpoint[:-4] + "/plan"
@@ -20,6 +43,7 @@ class PlannerClient:
             endpoint += "/plan"
         self.endpoint = endpoint
         self.timeout_s = timeout_s
+        self._opener: UrlOpener = opener or urllib.request.urlopen
 
     def plan(
         self,
@@ -60,7 +84,7 @@ class PlannerClient:
         )
 
         try:
-            with urllib.request.urlopen(request, timeout=self.timeout_s) as response:
+            with self._opener(request, timeout=self.timeout_s) as response:
                 data = json.loads(response.read().decode("utf-8"))
         except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
             raise PlannerError(f"planner request failed: {exc}") from exc
