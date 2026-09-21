@@ -24,3 +24,4 @@
 - Worker checks: `pnpm run check`.
 - Python/custom-node syntax smoke: `python -m compileall -q comfyui_jev_sparse`.
 - Performance/quality claims require dense, fixed-sparse, and Jev-guided runs under matched conditions.
+- Public/non-loopback Worker requests to `/plan` and `/mcp` must fail closed when `SHARED_TOKEN` is absent. Unauthenticated use is allowed only by an explicit local-development opt-in on a loopback host.
