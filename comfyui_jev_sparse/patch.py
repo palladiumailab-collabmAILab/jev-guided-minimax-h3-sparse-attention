@@ -114,10 +114,11 @@ class JevSparsePatch(csa.SparseAttnPatch):
             )
         except PlannerError as exc:
             self.current_keep_percent = [self.fallback_keep_percent] * self.layer_count
-            self.log_once(
-                ("planner_error", self.step_index),
-                f"planner unavailable at step {self.step_index}; using "
-                f"{self.fallback_keep_percent}% for all layers ({exc})",
+            logging.warning(
+                "Jev planner unavailable at step %d; using %d%% for all layers: %s",
+                self.step_index,
+                self.fallback_keep_percent,
+                exc,
             )
 
     def observe_layer(self, block_index: int, x: torch.Tensor) -> None:

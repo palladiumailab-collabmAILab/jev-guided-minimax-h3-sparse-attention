@@ -32,3 +32,6 @@ jobs:
 
       - name: Compile Python sources
         run: python -m compileall -q comfyui_jev_sparse
+
+      - name: Validate ComfyUI compatibility manifest
+        run: python tools/check_comfyui_compatibility.py --manifest-only

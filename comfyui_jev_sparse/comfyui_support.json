@@ -1,0 +1,24 @@
+{
+  "repository": "https://github.com/comfyanonymous/ComfyUI",
+  "revision": "c194dd00cd42aa18d9dbf27d977bf6b85d9ea565",
+  "checked_at": "2026-09-21",
+  "python": "3.12",
+  "dependencies": {
+    "comfy-kitchen": "0.2.35",
+    "torch": "the ComfyUI environment's CUDA-compatible build"
+  },
+  "required_imports": {
+    "comfy_extras.nodes_sparse_attention": [
+      "SparseAttnPatch",
+      "h3_eligible",
+      "parse_block_list",
+      "PRODUCER_CHUNK"
+    ],
+    "comfy_kitchen": [
+      "sol_attn_chunked",
+      "sol_attn_is_available"
+    ],
+    "comfy.patcher_extension": ["CallbacksMP"],
+    "comfy.ldm.minimax.model": ["MiniMaxH3Model"]
+  }
+}
