@@ -3,13 +3,18 @@
 The shared Codex development harness in this repository is sourced from:
 
 - repository: `palladiumailab-collabmAILab/codex-dev-harness`
-- source revision: `90bcc9bd7c67c636b287a68091a8ae4c61952391`
+- source revision: `d8b465a53f5c22c81803a1ddb5fdc9ddfa596210`
 
 ## Ownership
 
-The upstream repository is the canonical source for all shared harness content. The files below are upstream-managed and must not be edited independently here. Project-specific rules belong in `AGENTS.project.md` or other explicitly project-specific files.
+The upstream repository is the canonical source for all shared harness content. Files listed below are upstream-managed and must not be edited independently in this downstream repository. Project-specific rules belong in `AGENTS.project.md` or other explicitly project-specific files.
 
-When a shared rule needs to change, update and validate `codex-dev-harness` first, then synchronize these files from the new pinned revision.
+When a shared rule needs to change:
+
+1. change and validate it in `codex-dev-harness`;
+2. record the new upstream revision here;
+3. synchronize the managed files from that revision;
+4. keep downstream-only changes out of the managed files.
 
 ## Upstream-managed files
 

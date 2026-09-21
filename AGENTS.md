@@ -1,49 +1,29 @@
 # Codex Software Development Harness
 
-This shared file is managed from `palladiumailab-collabmAILab/codex-dev-harness`. Do not edit its common rules in this downstream repository. Update the canonical harness first, then synchronize from a pinned upstream revision recorded in `docs/harness-upstream.md`.
-
-Project-specific instructions belong in `AGENTS.project.md` or explicitly project-specific skills/docs. Read `AGENTS.project.md` when it exists.
+Shared rules are managed from `palladiumailab-collabmAILab/codex-dev-harness`; the pinned revision is recorded in `docs/harness-upstream.md`. Keep project-specific rules in `AGENTS.project.md` or explicitly project-specific skills/docs, and read `AGENTS.project.md` when present.
 
 ## Common invariants
 
 - Preserve the requested outcome, explicit constraints, and acceptance criteria.
-- Read the relevant `docs/specs/` or existing canonical requirement source before changing durable product/system behavior.
-- Treat tests, lint, builds, CI, evaluations, and inspections as evidence, not as substitutes for the requested outcome. Do not weaken them merely to obtain a pass.
-- Keep changes small and scoped. Do not add unrequested features, dependencies, external integrations, or broad refactors.
-- Preserve unrelated work. Do not use destructive reset/clean/checkout or force push as a default recovery action.
-- Never commit or expose secrets, private keys, tokens, or unnecessary personal data.
-- Do not deploy, incur charges, delete data, change permissions, or write to external services unless the task explicitly authorizes it.
+- Before changing durable product/system behavior, read the relevant `docs/specs/` or existing canonical requirement source; surface conflicts instead of silently choosing one side.
+- Treat tests, lint, builds, CI, evaluations, and inspections as evidence, not as substitutes for the requested outcome. Do not weaken checks merely to obtain a pass.
+- Keep changes minimal and preserve unrelated work. Do not default to destructive reset/clean/checkout or force push.
+- Never expose or commit secrets, private keys, tokens, or unnecessary personal data. Do not deploy, incur charges, delete data, change permissions, or write to external services unless explicitly authorized.
+- Read only the nearest instructions and the specifications, code, tests, and configuration needed for the task. Avoid purposeless repository-wide scans and large log dumps.
 
-## Conditional guidance
+## Read only when relevant
 
-Read only when relevant:
-
-- executable software, Docker reproducibility, GitHub Actions, Python/Ruff, or canonical specifications: `docs/project-baseline.md`
-- task contracts, evaluation decisions, long-running execution semantics, or optimization records: `docs/harness-architecture.md`
-- explicit GitHub operations: `skills/github-operations/SKILL.md`
+- Docker / GitHub Actions / Python-Ruff / shared specification layout: `docs/project-baseline.md`
+- task contracts / evaluation / optimization semantics: `docs/harness-architecture.md`
+- explicit GitHub remote operations: `skills/github-operations/SKILL.md`
 - unfamiliar cross-module repository investigation: `skills/repo-research/SKILL.md`
-- iterative agent/workflow optimization: `skills/self-improvement/SKILL.md`
-- work spanning multiple substantial stages/sessions: `skills/long-running-work/SKILL.md`
+- evaluated iterative agent/workflow optimization: `skills/self-improvement/SKILL.md`
+- substantial multi-stage or multi-session handoff: `skills/long-running-work/SKILL.md`
 
-## Model routing
+## Model use
 
-- Default: `gpt-5.6-sol / medium` for implementation, architecture, debugging, review, and final integration.
-- Bounded worker: `gpt-5.6-luna / max` for candidate extraction, mechanical transformation, bounded exploration, and independent read-only checks.
-- Escalate from Luna to Sol when the task requires cross-cutting judgment, architectural choice, unresolved debugging, or synthesis across uncertain evidence. Do not repeat the same failed cheap path.
-- Add other routing branches only when explicitly requested or supported by repo-local evaluation.
+- Default to `gpt-5.6-sol / medium` for implementation, architecture, debugging, review, and integration.
+- Use `gpt-5.6-luna / max` only for bounded extraction, mechanical transformation, limited exploration, or independent read-only checks.
+- Escalate to Sol when the work requires cross-cutting judgment or a bounded Luna attempt fails; do not repeat the same failed cheap path.
 
-## Workflow
-
-1. Identify the requested outcome, constraints, acceptance criteria, and smallest relevant change surface.
-2. Read only the relevant project-specific instructions, specifications, code, tests, and configuration.
-3. Implement the smallest sufficient change.
-4. Run proportionate verification.
-5. When GitHub changes are requested, verify the remote artifact and expected GitHub Actions result.
-6. Report the material change, evidence, and unresolved blockers.
-
-## Downstream ownership
-
-- This file and the shared files listed in `docs/harness-upstream.md` are upstream-managed.
-- Do not modify shared rules directly in the downstream repository.
-- Put project-specific requirements, architecture constraints, commands, and exceptions in `AGENTS.project.md` or another clearly project-specific file.
-- If a shared rule must change, update `codex-dev-harness` first and synchronize the resulting revision.
+Shared files listed in `docs/harness-upstream.md` remain upstream-managed; change common rules in the canonical harness first.
