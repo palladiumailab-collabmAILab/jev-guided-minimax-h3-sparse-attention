@@ -3,9 +3,10 @@ import { ZodError } from "zod";
 
 import { PlanInputSchema, createSparsePlan, type AiRunner } from "./planner";
 
-interface Env {
+export interface Env {
   AI: Ai;
   SHARED_TOKEN?: string;
+  ALLOW_INSECURE_LOCAL_DEV?: string;
 }
 
 function json(data: unknown, status = 200): Response {
@@ -17,9 +18,32 @@ function json(data: unknown, status = 200): Response {
   });
 }
 
+function tokensMatch(provided: string, expected: string): boolean {
+  const length = Math.max(provided.length, expected.length);
+  let difference = provided.length ^ expected.length;
+  for (let index = 0; index < length; index += 1) {
+    difference |= (provided.charCodeAt(index) || 0) ^ (expected.charCodeAt(index) || 0);
+  }
+  return difference === 0;
+}
+
+function isLoopbackHost(hostname: string): boolean {
+  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "[::1]" || hostname === "::1";
+}
+
 function authorized(request: Request, env: Env): boolean {
-  if (!env.SHARED_TOKEN) return true;
-  return request.headers.get("authorization") === `Bearer ${env.SHARED_TOKEN}`;
+  const configuredToken = env.SHARED_TOKEN?.trim();
+  if (!configuredToken) {
+    const url = new URL(request.url);
+    return env.ALLOW_INSECURE_LOCAL_DEV === "true" && isLoopbackHost(url.hostname);
+  }
+
+  const authorization = request.headers.get("authorization") ?? "";
+  const separator = authorization.indexOf(" ");
+  if (separator < 0 || authorization.slice(0, separator).toLowerCase() !== "bearer") {
+    return false;
+  }
+  return tokensMatch(authorization.slice(separator + 1).trim(), configuredToken);
 }
 
 function createServer(env: Env): McpServer {

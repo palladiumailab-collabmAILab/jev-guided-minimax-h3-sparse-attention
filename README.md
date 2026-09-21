@@ -41,7 +41,8 @@ No Q/K/V tensors are sent to Cloudflare. The request contains denoising-step con
 - MiniMax H3 ComfyUI custom node.
 - Per-block `topk_ratio` injected into ComfyUI's existing H3 `sol_attn_chunked` path.
 - Optional sampled activation RMS/variance telemetry.
-- Bearer-token protection when `SHARED_TOKEN` is configured.
+- Bearer-token protection is required for non-loopback/public requests. Missing `SHARED_TOKEN` is fail-closed;
+  unauthenticated access is available only when `ALLOW_INSECURE_LOCAL_DEV=true` and the request host is loopback.
 
 ## Important limitation
 
@@ -63,11 +64,20 @@ pnpm exec wrangler login
 pnpm run deploy
 ```
 
-Optional but recommended for a public deployment:
+Required before a public deployment:
 
 ```bash
 pnpm exec wrangler secret put SHARED_TOKEN
 ```
+
+Without `SHARED_TOKEN`, `/plan` and `/mcp` return `401` for deployed or non-loopback hosts. For local-only
+development, opt in explicitly:
+
+```bash
+pnpm run dev -- --var ALLOW_INSECURE_LOCAL_DEV:true
+```
+
+The opt-in is still rejected when the request host is not `localhost`, `127.0.0.1`, or `::1`.
 
 The Worker exposes:
 
