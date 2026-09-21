@@ -30,8 +30,11 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Run Python mock-boundary tests
+        run: python -m unittest discover -s test_py -p "test_*.py"
+
       - name: Compile Python sources
-        run: python -m compileall -q comfyui_jev_sparse
+        run: python -m compileall -q comfyui_jev_sparse test_py
 
       - name: Validate ComfyUI compatibility manifest
         run: python tools/check_comfyui_compatibility.py --manifest-only
