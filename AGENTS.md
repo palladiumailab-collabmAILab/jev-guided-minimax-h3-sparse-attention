@@ -8,7 +8,7 @@ Project-specific instructions belong in `AGENTS.project.md` or explicitly projec
 
 - Preserve the requested outcome, explicit constraints, and acceptance criteria.
 - Read the relevant `docs/specs/` or existing canonical requirement source before changing durable product/system behavior.
-- Treat tests, lint, builds, CI, evaluations, and inspections as evidence, not as substitutes for the requested outcome. Do not weaken them merely to obtain a pass.
+- Treat tests, lint, builds, CI, evaluations, and inspections as evidence. Do not rewrite an existing oracle to follow the implementation; use `docs/testing-governance.md` for test changes.
 - Keep changes small and scoped. Do not add unrequested features, dependencies, external integrations, or broad refactors.
 - Preserve unrelated work. Do not use destructive reset/clean/checkout or force push as a default recovery action.
 - Never commit or expose secrets, private keys, tokens, or unnecessary personal data.
@@ -20,6 +20,7 @@ Read only when relevant:
 
 - executable software, Docker reproducibility, GitHub Actions, Python/Ruff, or canonical specifications: `docs/project-baseline.md`
 - task contracts, evaluation decisions, long-running execution semantics, or optimization records: `docs/harness-architecture.md`
+- test failures, oracle changes, and Sol/Luna test ownership: `docs/testing-governance.md`
 - explicit GitHub operations: `skills/github-operations/SKILL.md`
 - unfamiliar cross-module repository investigation: `skills/repo-research/SKILL.md`
 - iterative agent/workflow optimization: `skills/self-improvement/SKILL.md`
@@ -27,10 +28,10 @@ Read only when relevant:
 
 ## Model routing
 
-- Default: `gpt-5.6-sol / medium` for implementation, architecture, debugging, review, and final integration.
-- Bounded worker: `gpt-5.6-luna / max` for candidate extraction, mechanical transformation, bounded exploration, and independent read-only checks.
-- Escalate from Luna to Sol when the task requires cross-cutting judgment, architectural choice, unresolved debugging, or synthesis across uncertain evidence. Do not repeat the same failed cheap path.
-- Add other routing branches only when explicitly requested or supported by repo-local evaluation.
+- Sol (`gpt-5.6-sol / medium`) owns requirements, planning, architecture, acceptance criteria, test design, protected-oracle decisions, hard debugging, review, and integration.
+- Luna (`gpt-5.6-luna / max`) handles bounded implementation, mechanical changes, new unit tests, test execution, and local debugging under a defined plan.
+- Luna must not rewrite existing assertions/expected values/goldens/snapshots, regression/acceptance/contract tests, or skip/xfail/delete failures merely to obtain green. Suspected test/spec defects return to Sol with evidence; protected-oracle changes stay in a review PR until approved.
+- Escalate to Sol when the work requires cross-cutting judgment or a bounded Luna attempt fails; do not repeat the same failed path.
 
 ## Workflow
 
